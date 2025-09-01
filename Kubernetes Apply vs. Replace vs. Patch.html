@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!-- is_embed=False -->
+<script type="text/javascript" async="" src="./Kubernetes Apply vs. Replace vs. Patch_files/o7weh035"></script><script async="" src="./Kubernetes Apply vs. Replace vs. Patch_files/gtm.js"></script><script>
+  const observer = new PerformanceObserver((list) => {
+    list.getEntries().forEach((entry) => {
+      console.log('%o', entry);
+    })
+  });
+  observer.observe({type: "navigation", buffered: true});
+</script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app218.us.archive.org';v.server_ms=266;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="./Kubernetes Apply vs. Replace vs. Patch_files/bundle-playback.js" charset="utf-8"></script>
+<script type="text/javascript" src="./Kubernetes Apply vs. Replace vs. Patch_files/wombat.js" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden"};</script>
+<script type="text/javascript" src="./Kubernetes Apply vs. Replace vs. Patch_files/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("https://blog.atomist.com/kubernetes-apply-replace-patch/","20220508130521","https://web.archive.org/","web","/_static/",
+	      "1652015121");
+</script>
+<link rel="stylesheet" type="text/css" href="./Kubernetes Apply vs. Replace vs. Patch_files/banner-styles.css">
+<link rel="stylesheet" type="text/css" href="./Kubernetes Apply vs. Replace vs. Patch_files/iconochive.css">
+<!-- End Wayback Rewrite JS Include -->
+
+
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Kubernetes Apply vs. Replace vs. Patch</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:url" content="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/">
+
+    <link rel="stylesheet" type="text/css" href="./Kubernetes Apply vs. Replace vs. Patch_files/screen.css">
+
+    <link rel="stylesheet" href="./Kubernetes Apply vs. Replace vs. Patch_files/eqm8mwn.css">
+    <link rel="stylesheet" href="./Kubernetes Apply vs. Replace vs. Patch_files/viv5qyy.css">
+
+    <link rel="stylesheet" href="./Kubernetes Apply vs. Replace vs. Patch_files/kgg4lzj.css">
+
+    <link href="./Kubernetes Apply vs. Replace vs. Patch_files/css2" rel="stylesheet">
+
+    <meta name="description" content="Kubernetes offers several ways to update resources: apply, edit, patch, and replace. This post explains the various approaches and when to use each.">
+    <link rel="icon" href="https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/favicon.png" type="image/png">
+    <link rel="canonical" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/amp/">
+    
+    <meta property="og:site_name" content="Content for Engineers by Engineers | Atomist Blog">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Kubernetes Apply vs. Replace vs. Patch">
+    <meta property="og:description" content="Kubernetes offers several ways to update resources: apply, edit, patch, and replace. Unfortunately, there seems to be some confusion about what each does and when to use them. This post explains the various approaches and when to use each.">
+    <meta property="og:url" content="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/">
+    <meta property="og:image" content="https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2020/05/atomist-kubernetes-apply-replace-patch-1.jpg">
+    <meta property="article:published_time" content="2020-05-19T20:09:42.000Z">
+    <meta property="article:modified_time" content="2021-07-06T23:12:05.000Z">
+    <meta property="article:tag" content="DevOps">
+    <meta property="article:tag" content="How-To">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kubernetes Apply vs. Replace vs. Patch">
+    <meta name="twitter:description" content="Kubernetes offers several ways to update resources: apply, edit, patch, and replace. This post explains the various approaches and when to use each.">
+    <meta name="twitter:url" content="https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/kubernetes-apply-replace-patch/">
+    <meta name="twitter:image" content="https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2020/05/atomist-kubernetes-apply-replace-patch-2.jpg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="David Dooling">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="DevOps, How-To">
+    <meta name="twitter:site" content="@atomist">
+    <meta name="twitter:creator" content="@ddgenome">
+    <meta property="og:image:width" content="2000">
+    <meta property="og:image:height" content="1335">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://web.archive.org/web/20220508130521/https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Content for Engineers by Engineers | Atomist Blog",
+        "url": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/content/images/2020/05/Atomist-Logo-Color-Lockup-Horiz.png"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "David Dooling",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/content/images/2018/11/dd.jpg",
+            "width": 400,
+            "height": 400
+        },
+        "url": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/author/david/",
+        "sameAs": [
+            "https://web.archive.org/web/20220508130521/https://atomist.com",
+            "https://web.archive.org/web/20220508130521/https://twitter.com/ddgenome"
+        ]
+    },
+    "headline": "Kubernetes Apply vs. Replace vs. Patch",
+    "url": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/",
+    "datePublished": "2020-05-19T20:09:42.000Z",
+    "dateModified": "2021-07-06T23:12:05.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/content/images/2020/05/atomist-kubernetes-apply-replace-patch-1.jpg",
+        "width": 2000,
+        "height": 1335
+    },
+    "keywords": "DevOps, How-To",
+    "description": "Kubernetes offers several ways to update resources: apply, edit, patch, and replace. Unfortunately, there seems to be some confusion about what each does and when to use them. This post explains the various approaches and when to use each.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://web.archive.org/web/20220508130521/https://blog.atomist.com/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 4.47">
+    <link rel="alternate" type="application/rss+xml" title="Content for Engineers by Engineers | Atomist Blog" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/rss/">
+    <script defer="" src="./Kubernetes Apply vs. Replace vs. Patch_files/portal.min.js" data-ghost="https://blog.atomist.com/" crossorigin="anonymous"></script><style id="gh-members-styles">.gh-post-upgrade-cta-content,
+.gh-post-upgrade-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.gh-post-upgrade-cta-content {
+    border-radius: 8px;
+    padding: 40px 4vw;
+}
+
+.gh-post-upgrade-cta h2 {
+    color: #ffffff;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta p {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.gh-post-upgrade-cta small {
+    font-size: 16px;
+    letter-spacing: -0.2px;
+}
+
+.gh-post-upgrade-cta a {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a:hover {
+    color: #ffffff;
+    opacity: 0.8;
+    box-shadow: none;
+    text-decoration: underline;
+}
+
+.gh-post-upgrade-cta a.gh-btn {
+    display: block;
+    background: #ffffff;
+    text-decoration: none;
+    margin: 28px 0 0;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.gh-post-upgrade-cta a.gh-btn:hover {
+    opacity: 0.92;
+}</style>
+    <script defer="" src="./Kubernetes Apply vs. Replace vs. Patch_files/cards.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./Kubernetes Apply vs. Replace vs. Patch_files/cards.min.css">
+    <link rel="stylesheet" href="./Kubernetes Apply vs. Replace vs. Patch_files/prism.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="./Kubernetes Apply vs. Replace vs. Patch_files/js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-74966852-9');
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://web.archive.org/web/20220508130521/https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MZ8NMFS');</script>
+<!-- End Google Tag Manager -->
+
+<style>:root {--ghost-accent-color: #15171A;}</style>
+
+<style>
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */</style><style>
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */</style><style id="fit-vids-style">.fluid-width-video-container{flex-grow: 1;width:100%;}.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style></head>
+<body class="post-template tag-devops tag-how-to"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display: block; direction: ltr;"><template shadowrootmode="closed"><div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;" class="">
+<div id="donato" style="position:relative;width:100%;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20220508130521/https%3A//blog.atomist.com/kubernetes-apply-replace-patch/" scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="https://web.archive.org/web/" title="Wayback Machine home page"><img src="https://web.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="/_static/images/toolbar/wayback-toolbar-logo-100.png, /_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, /_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0"></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="https://web.archive.org/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://blog.atomist.com/kubernetes-apply-replace-patch/" onfocus="this.focus();this.select();" style="flex:1;" autocomplete="off"><input type="hidden" name="type" value="replay"><input type="hidden" name="date" value="20220508130521"><input type="submit" value="Go">
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;"><a class="t" href="https://web.archive.org/web/*/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="See a list of every capture for this URL">23 captures</a><div class="r" title="Timespan for captures of this URL">23 Jun 2020 - 1 Apr 2023</div></div>
+        <div class="k">
+          <a href="https://web.archive.org/web/20050801000000/https://blog.atomist.com/kubernetes-apply-replace-patch/" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="725" height="27" border="0"></canvas>
+            <div class="yt" style="display: none; width: 25px; height: 27px; left: 225px;"></div><div class="mt" style="display: none; width: 2px; height: 27px; left: 240px;"></div></div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20220121171206/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="21 Jan 2022"><strong>Jan</strong></a></td>
+            <td class="c" id="displayMonthEl" title="You are here: 13:05:21 May 08, 2022">May</td>
+            <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20220706035150/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="06 Jul 2022"><strong>Jul</strong></a></td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20220121171206/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="17:12:06 Jan 21, 2022"><img src="https://web.archive.org/_static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0"></a></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 13:05:21 May 08, 2022">08</td>
+            <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20220706035150/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="03:51:50 Jul 06, 2022"><img src="https://web.archive.org/_static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0"></a></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20210421044328/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="21 Apr 2021"><strong>2021</strong></a></td>
+            <td class="c" id="displayYearEl" title="You are here: 13:05:21 May 08, 2022">2022</td>
+            <td class="f" nowrap="nowrap">2023</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#" title="Share via My Web Archive" style="display: none;">
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in" style="display: inline-block;">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web" style="display: none;"></span>
+        </span>
+                <a class="xxs" href="http://faq.web.archive.org/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="https://web.archive.org/web/20220508130521/http://web.archive.org/screenshot/https://blog.atomist.com/kubernetes-apply-replace-patch/" id="wm-screenshot" title="screenshot" style="visibility: hidden;">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#" data-url="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#" data-url="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/web)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/web" target="_new"><span class="wm-title">web</span></a></div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web.archive.org/_static/images/loading.gif" alt="loading"></div>
+    </div>
+    </div>
+  </div></div></div><link rel="stylesheet" type="text/css" href="./Kubernetes Apply vs. Replace vs. Patch_files/banner-styles.css"><link rel="stylesheet" type="text/css" href="./Kubernetes Apply vs. Replace vs. Patch_files/iconochive.css"><div class="wb-autocomplete-suggestions "></div></template>
+</div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(725,27,25,2,"web","https://blog.atomist.com/kubernetes-apply-replace-patch/","20220508130521",1996,"/_static/",["/_static/css/banner-styles.css?v=S1zqJCYt","/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+
+<div class="site-wrapper">
+
+    
+<header class="site-header outer no-cover">
+    <div class="mob-menu" id="mob-menu">
+    <div class="mob-menu-header">
+        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/" class="mob-menu-header__logo">
+            <img src="./Kubernetes Apply vs. Replace vs. Patch_files/atomist-logo.svg" alt="Atomist" height="50" width="50">
+        </a>
+        <ul class="mob-menu-header-items">
+            <li class="mob-menu-header-items__item">
+                <a href="https://web.archive.org/web/20220508130521/https://dso.atomist.com/user/login">Log in</a>
+            </li>
+            <li class="mob-menu-header-items__item">
+                <button id="close-menu">
+                    <img src="./Kubernetes Apply vs. Replace vs. Patch_files/close-menu-icon.svg" alt="Close menu">
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="mob-menu-body">
+        <ul class="mob-menu-body-items">
+            <li class="mob-menu-body-items-item">
+                <p class="mob-menu-body-items-item__link">
+                    Product
+                </p>
+                <ul class="mob-menu-body-items-item-submenu">
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/product">Product</a>
+                    </li>
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/product/vulnerability-scanning">Vulnerability Scanning</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="mob-menu-body-items-item">
+                <p class="mob-menu-body-items-item__link">
+                    Resources
+                </p>
+                <ul class="mob-menu-body-items-item-submenu">
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://docs.atomist.com/getting-started/">Quick Start Guide</a>
+                    </li>
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://docs.atomist.com/">Documentation</a>
+                    </li>
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/">Blog</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="mob-menu-body-items-item">
+                <p class="mob-menu-body-items-item__link">
+                    Company
+                </p>
+                <ul class="mob-menu-body-items-item-submenu">
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/about">About Us</a>
+                    </li>
+                    <li class="mob-menu-body-items-item-submenu__item">
+                        <p onclick="Intercom(&#39;showNewMessage&#39;);">Contact Us</p>
+                    </li>
+                </ul>
+            </li>
+            <li class="mob-menu-body-items-item">
+                <a href="https://web.archive.org/web/20220508130521/https://dso.atomist.com/user/signup" class="btn btn--primary">Try Atomist</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<nav class="nav sticky" id="nav">
+    <div class="nav-cont">
+        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/" class="nav__logo">
+            <img src="./Kubernetes Apply vs. Replace vs. Patch_files/atomist-logo-with-text.png" alt="Atomist" height="60" width="200">
+            <img src="./Kubernetes Apply vs. Replace vs. Patch_files/atomist-logo.svg" alt="Atomist" height="50" width="50">
+        </a>
+        <ul class="nav-menu">
+            <li class="nav-menu-item">
+                <a href="https://web.archive.org/web/20220508130521/https://atomist.com/product" class="nav-menu-item__link">Product</a>
+                <ul class="nav-menu-item-submenu">
+                    <li class="nav-menu-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/product/vulnerability-scanning">Vulnerability Scanning</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-menu-item">
+                <p class="nav-menu-item__link">Resources</p>
+                <ul class="nav-menu-item-submenu">
+                    <li class="nav-menu-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://docs.atomist.com/getting-started/">Quick Start Guide</a>
+                    </li>
+                    <li class="nav-menu-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://docs.atomist.com/">Documentation</a>
+                    </li>
+                    <li class="nav-menu-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/">Blog</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-menu-item">
+                <p class="nav-menu-item__link">Company</p>
+                <ul class="nav-menu-item-submenu">
+                    <li class="nav-menu-item-submenu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/about">About Us</a>
+                    </li>
+                    <li class="nav-menu-item-submenu__item">
+                        <p onclick="Intercom(&#39;showNewMessage&#39;);">Contact Us</p>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="nav-cont">
+        <ul class="nav-links">
+            <li class="nav-links__item"><a href="https://web.archive.org/web/20220508130521/https://dso.atomist.com/user/login">Log in</a></li>
+            <li class="nav-links__item"><a id="nav-btn" href="https://web.archive.org/web/20220508130521/https://dso.atomist.com/user/signup" class="btn small btn--outline">Try Atomist</a></li>
+        </ul>
+    </div>
+    <button class="nav-open" id="open-menu">
+        <img src="./Kubernetes Apply vs. Replace vs. Patch_files/open-menu-icon.svg" alt="Open menu">
+    </button>
+</nav>
+</header>
+
+
+    <main id="site-main" class="site-main outer">
+        <div class="inner">
+
+            <article class="post-full post tag-devops tag-how-to featured ">
+
+                    <figure class="post-full-image" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/assets/img/blog-hero-bg.png?v=473fb055dd)">
+                    </figure>
+
+                <section class="post-full-content">
+
+                    <section class="post-full-meta">
+                   <span class="post-full-primary-tag">
+                           <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/tag/devops/">DevOps</a>
+                   </span>
+                        <time class="post-full-meta-date" datetime="2020-05-19">05/2020</time>
+                    </section>
+
+                    <div class="post-content-share">
+                        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#" class="post-content-up-arrow">
+                            <svg width="28" height="47" viewBox="0 0 28 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.49609 15.1176L13.6137 3L25.7314 15.1176" stroke="#1B344B" stroke-width="4" stroke-miterlimit="10"></path>
+<path d="M13.6133 3V46.6235" stroke="#1B344B" stroke-width="4" stroke-miterlimit="10"></path>
+</svg>
+                        </a>
+                        <a class="post-content-share-icon post-content-share-tw" href="https://web.archive.org/web/20220508130521/https://twitter.com/share?text=Kubernetes%20Apply%20vs.%20Replace%20vs.%20Patch%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;url=https://blog.atomist.com/kubernetes-apply-replace-patch/" onclick="window.open(this.href, &#39;share-twitter&#39;,
+                        &#39;width=550,height=235&#39;);return false;">
+                        <svg width="39" height="40" viewBox="0 0 39 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19.6109 0.705872C8.90277 0.705872 0.222656 9.36796 0.222656 20.0539C0.222656 30.7397 8.90277 39.4018 19.6109 39.4018C30.319 39.4018 38.9991 30.7397 38.9991 20.0539C38.9991 9.36796 30.319 0.705872 19.6109 0.705872ZM29.1732 17.0046C29.1829 17.202 29.1867 17.4032 29.1867 17.6025C29.1867 23.7145 24.5258 30.761 16.0008 30.761C13.3834 30.761 10.9463 29.9949 8.89695 28.6831C9.25951 28.7256 9.62788 28.7488 10.0021 28.7488C12.1736 28.7488 14.1725 28.0097 15.7584 26.7695C13.7304 26.7328 12.0185 25.3939 11.4291 23.5578C11.7121 23.6119 12.001 23.641 12.3015 23.641C12.7242 23.641 13.1333 23.5849 13.523 23.4784C11.4038 23.0547 9.80432 21.1857 9.80432 18.9433C9.80432 18.9239 9.80432 18.9046 9.80432 18.8852C10.4286 19.2335 11.144 19.4405 11.9041 19.4637C10.6613 18.6337 9.84309 17.2194 9.84309 15.6135C9.84309 14.7661 10.0719 13.9708 10.4713 13.2879C12.7571 16.0875 16.1714 17.9275 20.0239 18.121C19.9444 17.7824 19.9036 17.4303 19.9036 17.0665C19.9036 14.5126 21.9782 12.4424 24.5374 12.4424C25.8713 12.4424 27.0754 13.0034 27.9207 13.9031C28.9754 13.6961 29.9681 13.3111 30.8638 12.7809C30.5168 13.8606 29.7819 14.7661 28.8261 15.3388C29.7626 15.2285 30.6564 14.9789 31.4881 14.6113C30.8657 15.538 30.0805 16.3526 29.1732 17.0046Z" fill="#1B344B"></path>
+</svg>
+                        </a>
+                        <a class="post-content-share-icon post-content-share-in" href="https://web.archive.org/web/20220508130521/https://www.linkedin.com/shareArticle?mini=true&amp;url=https://blog.atomist.com/kubernetes-apply-replace-patch/&amp;title=Kubernetes%20Apply%20vs.%20Replace%20vs.%20Patch%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;source=Atomist" onclick="window.open(this.href, &#39;share-linkedin&#39;,
+                        &#39;width=550,height=235&#39;);return false;">
+                        <svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19.6109 0.00585938C8.9047 0.00585938 0.222656 8.66989 0.222656 19.3538C0.222656 30.0378 8.9047 38.7018 19.6109 38.7018C30.3171 38.7018 38.9991 30.0378 38.9991 19.3538C38.9991 8.66989 30.3171 0.00585938 19.6109 0.00585938ZM13.9767 29.2542H9.25563V15.0779H13.9767V29.2542ZM11.6152 13.1412H11.5842C10.0001 13.1412 8.9745 12.0519 8.9745 10.6918C8.9745 9.30063 10.0312 8.2423 11.6462 8.2423C13.2612 8.2423 14.2559 9.30063 14.2869 10.6918C14.2869 12.0519 13.2632 13.1412 11.6152 13.1412ZM31.0034 29.2542H26.2824V21.6698C26.2824 19.764 25.598 18.4638 23.8899 18.4638C22.585 18.4638 21.8095 19.3403 21.4663 20.1877C21.3423 20.4915 21.3112 20.9133 21.3112 21.337V29.2542H16.5902C16.5902 29.2542 16.6522 16.4071 16.5902 15.0779H21.3112V17.0843C21.9394 16.1189 23.062 14.7452 25.5669 14.7452C28.6729 14.7452 31.0034 16.7709 31.0034 21.1261V29.2542Z" fill="#1B344B"></path>
+</svg>
+                        </a>
+                        <a class="post-content-share-icon post-content-share-fb" href="https://web.archive.org/web/20220508130521/https://www.facebook.com/sharer/sharer.php?u=https://blog.atomist.com/kubernetes-apply-replace-patch/" onclick="window.open(this.href,
+                        &#39;share-facebook&#39;,&#39;width=580,height=296&#39;);return false;">
+                        <svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19.6109 0.304077C8.90277 0.304077 0.222656 8.96617 0.222656 19.6521C0.222656 30.3379 8.90277 39 19.6109 39C30.319 39 38.9991 30.3379 38.9991 19.6521C38.9991 8.9681 30.319 0.304077 19.6109 0.304077ZM24.4696 13.6232H21.9704C21.2977 13.6232 20.8246 14.1921 20.8246 14.9002V16.0108H24.394L23.8162 19.6172H20.8246V29.2854H17.1738V19.6172H14.7503V16.0108H17.1738V14.1708H17.1815C17.2455 12.0735 17.9745 10.0767 21.5342 9.95098V9.93743H24.4715V13.6232H24.4696Z" fill="#1B344B"></path>
+</svg>
+                        </a>
+                    </div>
+                    <h1 class="post-title">Kubernetes Apply vs. Replace vs. Patch</h1>
+                    <div class="post-content">
+                        <p><em><strong>Editor's note: This post was originally published in May 2020. Since then, Atomist has evolved and updated its platform and product offerings. For up-to-date information, check out the <a href="https://web.archive.org/web/20220508130521/https://atomist.com/">Atomist product page</a>.</strong></em></p><p>Kubernetes offers several ways to update resources: apply, edit, patch, and replace. Unfortunately, there seems to be some confusion about what each does and when to use them. When <a href="https://web.archive.org/web/20220508130521/https://www.google.com/search?safe=strict&amp;q=kubernetes+apply+vs+replace">searching Google for ‘kubernetes apply vs replace’</a>, the <a href="https://web.archive.org/web/20220508130521/https://stackoverflow.com/questions/47241626/what-is-the-difference-between-kubectl-apply-and-kubectl-replace">highlighted answer provided from Stack Overflow</a> is <strong>wrong</strong>. When searching for ‘<a href="https://web.archive.org/web/20220508130521/https://www.google.com/search?safe=strict&amp;q=kubernetes+apply+vs+patch">kubernetes apply vs patch</a>’, the first entry of the results is the <code>kubectl patch</code> documentation, which does not include a comparison of <code>apply</code> and <code>patch</code>. This post explains the various approaches and when to use each.</p><blockquote>Update: This post is now the first site returned by Google when searching for ‘kubernetes apply vs replace’, but the highlighted answer is still wrong. When searching for ‘kubernetes apply vs patch’, this post is the highlighted answer!</blockquote><p>Sometimes during the lifecycle of a Kubernetes resource, e.g., a service, deployment, or ingress, specific properties of the resource need to be changed, added, or deleted. For example, an annotation needs to be added or the desired number of replicas of a deployment needs to be increased or decreased.</p><h2 id="the-kubernetes-cli">The Kubernetes CLI</h2><p>If you interact with your Kubernetes clusters using the <code><a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/reference/kubectl/overview/">kubectl</a></code> command-line interface (CLI), you are probably familiar with the <code>apply</code> and <code>edit</code> subcommands. The <code>apply</code> command reads resource specs from a file and “upserts”, i.e., inserts/creates a resource if it does not exist or updates it if it does, those resources in the Kubernetes cluster. The <code>edit</code> command reads the resource from the Kubernetes API, writes the resource specification, i.e., “spec”, into a local file, and opens that file up in a text editor for you. You can then edit and save the file and <code>kubectl</code> will send the changes you made back to the Kubernetes API, which takes care of effecting those changes upon the resource.</p><p>Likely less familiar are the <code>patch</code> and <code>replace</code> subcommands of <code>kubectl</code>. The <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/"><code>patch</code> command</a> allows you to modify part of a resource spec, providing just the changed part on the command line. The <code>replace</code> command behaves kind of like a manual version of the <code>edit</code> command. You have to download the current version of the resource spec, e.g., using <code>kubectl get -o yaml</code>, edit it, and then use <code>kubectl replace</code> to update the resource using the modified spec. If any changes have occurred between reading and replacing the resource, the <code>replace</code> will fail.</p><h2 id="the-kubernetes-api">The Kubernetes API</h2><p>If you interact with your Kubernetes clusters using a <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/reference/using-api/client-libraries/">Kubernetes client library</a> for your programming language of choice, you are probably familiar with methods like <code>CoreV1().Pods().Update()</code>, <code>replaceNamespacedService</code> or <code>patch_namespaced_deployment</code>. Underlying these client library methods are HTTP requests using the <code>PUT</code> and <code>PATCH</code> <a href="https://web.archive.org/web/20220508130521/https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">HTTP request methods</a>. The “update” and “replace” methods use <code>PUT</code> and the “patch” methods use, not surprisingly, <code>PATCH</code>.</p><p>It is worth noting that <code>kubectl</code> also interacts with your clusters using the Kubernetes API. In other words, <code>kubectl</code> is a command-line wrapper for the Go Kubernetes client library, while also providing a significant amount of <em>sugar</em> on top of the capabilities of the Kubernetes API. For example, you may have noticed no “apply” API methods were mentioned above. At present, all of the <code>kubectl apply</code> logic, i.e., the logic that creates non-existent resources and patches existing resources, lives entirely in the <code>kubectl</code> code base. There is an effort underway to <a href="https://web.archive.org/web/20220508130521/https://github.com/kubernetes/enhancements/issues/555">move the apply logic into the Kubernetes API</a>, but those efforts are still in beta. More on that below.</p><h2 id="by-default-patch">By default, patch</h2><p>When you want to update a resource, it is best to default to patching it. This is true whether using the Kubernetes client libraries or <code>kubectl</code>.</p><h3 id="be-strategic">Be strategic</h3><!--kg-card-begin: markdown--><p>Under the hood, the <code>kubectl</code> <code>apply</code>, <code>edit</code>, and <code>patch</code> commands all use the <code>PATCH</code> HTTP request method to update an existing resource. More specifically, they all use the <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/#notes-on-the-strategic-merge-patch">strategic-merge patching</a> approach when updating resources, although <code>patch</code> can use other approaches (more on that below). The strategic-merge approach attempts to “do the right thing” when combining the provided spec with the existing spec. More specifically, it attempts to merge both objects and arrays, meaning changes tend to be additive. For example, providing a patch that contains a single, new environment variable in a pod container spec results in that environment variable being added to the existing environment variables, not overwriting them. To delete a property with this approach, you need to specifically set its value to <code>null</code> in the provided spec. So among the updating <code>kubectl</code> subcommands, which is best to use?</p>
+<p>If you create and manage your resources using <code>kubectl apply</code>, it is best to always use <code>kubectl apply</code> when updating so <code>kubectl</code> can manage the configuration and properly track the requested changes from apply to apply. The advantage of always using <code>apply</code> is that it keeps track of the previously applied spec, allowing it to know when spec properties and array elements are explicitly removed. This allows <code>apply</code> to remove properties and array elements when a normal strategic merge would not. The <code>edit</code> and <code>patch</code> commands do <em>not</em> update the annotation <code>kubectl apply</code> uses to track its changes, so any changes made by <code>edit</code> and <code>patch</code>, while tracked and made manifest by the Kubernetes API, are <em>invisible</em> to subsequent <code>apply</code> commands, meaning that <code>apply</code> will not remove them even if they do not appear in the <code>apply</code> input spec<sup class="footnote-ref"><a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#fn1" id="fnref1">[1]</a></sup>.</p>
+<p>If you are not using <code>kubectl apply</code>, you can use both <code>edit</code> and <code>patch</code> interchangeably, selecting whichever command suits the specific change you are trying to make. When adding and changing spec properties, both approaches are more or less equivalent. When removing spec properties or array elements, <code>edit</code> behaves like a one-time-use <code>apply</code>, i.e., it keeps track of what the spec was before and after you edit it so it can explicitly remove properties and array elements from the resource. Using <code>patch</code>, you have to explicitly set the value of a property to <code>null</code> in the patch spec to remove it from the resource. Removing an array element using a strategic merge patch is more complicated, <a href="https://web.archive.org/web/20220508130521/https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/strategic-merge-patch.md#delete-directive">requiring the use of merge directives</a>. See the other patching approaches below for more reasonable alternatives.</p>
+<p>To have the “patch” client library methods behave similarly to the above <code>kubectl</code> patching subcommands, you should set the <code>content-type</code> header in the request to <code>application/strategic-merge-patch+json</code>. Like with <code>kubectl patch</code>, if you want to remove spec properties, you will need to explicitly set their values to <code>null</code>. If you want to remove array elements, you will need to include merge directives in your patch spec or use a different patching approach.</p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>The <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#kubectl-apply">Kubernetes documentation</a> states that <code>edit</code> and <code>patch</code> do update the annotation used by <code>kubectl apply</code>, but in practice that is not the case. <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-apply-replace-patch/#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+<!--kg-card-end: markdown--><h3 id="other-patching-approaches">Other patching approaches</h3><p>Kubernetes supports two other patching approaches: <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/tasks/run-application/update-api-object-kubectl-patch/#use-a-json-merge-patch-to-update-a-deployment">JSON merge patch</a> and <a href="https://web.archive.org/web/20220508130521/https://erosb.github.io/post/json-patch-vs-merge-patch/">JSON patch</a>. Like the strategic-merge approach, the JSON merge patch approach accepts a partial Kubernetes spec as input and supports merging objects. The JSON merge patch approach differs from the strategic-merge approach in that it only supports replacing arrays. This includes the <code>containers</code> array in a pod spec. That means when using the JSON merge approach, you need to supply complete specs for all of the containers if you want to change any property of any container. As such, the JSON merge patch approach is useful if you want to remove elements from from an array in a spec. On the command line, you can select JSON merge patch using <code>kubectl patch --type=merge</code>. When using the Kubernetes API, JSON merge patch is used when accessing a Kubernetes resource endpoint using the <code>PATCH</code> request method and setting the <code>content-type</code> request header to <code>application/merge-patch+json</code>.</p><p>Rather than providing a partial resource spec, the JSON patch approach uses a JSON representation of the changes you want to make to a resource. A JSON patch is an array where each element of the array is a description of a change to make to the resource. JSON patch is a more flexible and powerful way to express the changes you want to make, but comes at the cost that you are no longer sending a partial resource spec, but a set of changes you want made in a distinct, non-Kubernetes-spec format. On the command line, you can select JSON patch using <code>kubectl patch --type=json</code>. When using the Kubernetes API, JSON patch is used when accessing a Kubernetes resource endpoint using the <code>PATCH</code> request method and setting the <code>content-type</code> request header to <code>application/json-patch+json</code>.</p><h2 id="when-you-need-to-be-certain-replace">When you need to be certain, replace</h2><p>There may be certain instances when you want to be sure that no changes have been made to a resource between the time you read the resource and when you are updating it. Put another way, you need to make sure all changes to a resource are <em>atomic</em>. This is the use case for updating a resource using replace. For example, if you have a ConfigMap with a counter that is updated by multiple sources, you may want to make sure that two sources do not attempt to update the counter simultaneously, causing you to “lose” an update. To illustrate, imagine this sequence of events using the patching approach.</p><ol><li>A and B get the current state of the resource from the Kubernetes API.</li><li>Both A and B locally update the spec, incrementing the counter from <em>n</em> to <em>n+1</em> and appending “A” and “B”, respectively, to the “updated-by” annotation.</li><li>A is a bit quicker and patches the resource.</li><li>B patches the resource.</li></ol><p>The result is that the A update is lost. The last patch operation wins and the counter ends up only being incremented by one instead of two and the value of the “updated-by” annotation ends with “B” and has no “A”. Compare the above to what happens when the updates are done using the replace approach.</p><ol><li>A and B get the current state of the resource from the Kubernetes API.</li><li>Both A and B locally update the spec, incrementing the counter from <em>n</em> to <em>n+1</em> and appending “A” and “B”, respectively, to the “updated-by” annotation.</li><li>A is a bit quicker and replaces the resource.</li><li>B attempts to replace the resource but the update is rejected by the API because the resource version in the replacement spec does not match the current resource version in Kubernetes because the resource version was incremented when the A replace operation was made.</li></ol><p>In the above case, source B will have to fetch the resource again, make its changes against the new state, and attempt to replace again. The result will be that the counter will have been incremented by two and the “updated-by” annotation will end with “AB”.</p><p>Implicit in the above example is that replacing a resource is just that: replacing the <em>entire</em> resource. The spec supplied in the replace request should be the fully formed resource spec, not a partial spec and not just the parts required when using <code>kubectl apply</code>. In particular, you <em>must</em> include the current <code>resourceVersion</code> in the <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectmeta-v1-meta">spec metadata</a>. If you do not include the <code>resourceVersion</code> or the version you provide is not the current one, the replacement will be rejected. As such, the best approach for using replace is to read the resource, update it, and replace it, immediately. Using <code>kubectl</code>, this might look like</p><pre class=" language-console"><code class=" language-console">$ kubectl get deployment my-deployment -o json \
+    | jq '.spec.template.spec.containers[0].env[1].value = "new value"' \
+    | kubectl replace -f -</code></pre><p>That being said, you may have noticed that you can successfully run these two commands in sequence</p><pre class=" language-console"><code class=" language-console">$ kubectl create -f deployment.yaml
+$ kubectl replace -f deployment.yaml</code></pre><p>as long as the <code>deployment.yaml</code> does <em>not</em> specify the <code>.metadata.resourceVersion</code> property. That seems to directly contradict what I said above, i.e., “you <em>must</em> include the current <code>resourceVersion</code> in the spec metadata.” So is that statement wrong? No, it is not. What is happening under the hood is that <code>kubectl</code> notices you have not supplied the <code>resourceVersion</code> so it reads the resource from Kubernetes, adds the current <code>resourceVersion</code> to the spec you provided, and only then performs the replace request. Since that magic, which is dangerous if you are relying on the atomic nature of replace, resides entirely in <code>kubectl</code>, you cannot rely on it when using a Kubernetes API client library. In that case, you will have to <code>GET</code> the current resource spec, update it, and then issue the <code>PUT</code> request.</p><h2 id="when-you-can-t-patch-forcibly-replace">When you can't patch, forcibly replace</h2><p>Sometimes you need to make changes to a resource that are not allowed by the Kubernetes API. In these instances, you can <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#disruptive-updates">forcibly replace the resource</a>, effectively deleting and re-creating the resource. This is done using <code>kubectl replace --force</code> on the command line. This forcibly and immediately deletes the resources and then re-creates it with the provided spec. There is no “force replace” API endpoint. To perform a similar operation using the Kubernetes API, you have to perform two separate operations. First, you must delete the resource, setting <code>gracePeriodSeconds</code> to zero (0) and <code>propagationPolicy</code> to “Background”, and then re-create the resource using the desired spec.</p><blockquote><strong>This approach can be disruptive and result in an inconsistent state!</strong></blockquote><h2 id="server-side-apply">Server-side apply</h2><p>As mentioned above, the Kubernetes developers are working on implementing the apply logic in <code>kubectl</code> within the Kubernetes API. The beta 2 <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/docs/reference/using-api/api-concepts/#server-side-apply">server-side apply logic</a> is available in <a href="https://web.archive.org/web/20220508130521/https://kubernetes.io/blog/2020/04/01/kubernetes-1.18-feature-server-side-apply-beta-2/">Kubernetes 1.18</a> via <code>kubectl apply --server-side</code> on the command line and on resource API endpoints using the <code>PATCH</code> request method with the <code>content-type</code> header value set to <code>application/apply-patch+yaml</code>.</p><blockquote>Note: JSON is valid YAML, so you can send a JSON spec when <code>content-type</code> is <code>application/apply-patch+yaml</code>.</blockquote><p>Aside from simply making <code>kubectl apply</code> logic available to all clients via the API, the server-side apply implementation tracks who is responsible for which fields in the spec, allowing multiple “field managers” to safely edit different portions of a spec without unknowingly conflicting. In other words, when server-side apply is more generally available, it will provide a mechanism for different clients, e.g., <code>kubectl</code>, <a href="https://web.archive.org/web/20220508130521/https://www.pulumi.com/">Pulumi</a> or <a href="https://web.archive.org/web/20220508130521/https://www.terraform.io/">Terraform</a>, <a href="https://web.archive.org/web/20220508130521/https://www.weave.works/technologies/gitops/">GitOps</a>, and a script you wrote using a Kubernetes client library, to all manage the same resources safely.</p><h2 id="wrapping-up-dates-">Wrapping up(dates)</h2><p>Hopefully this brief trip through the various ways to update resources in your Kubernetes clusters has been helpful. We have learned that the combatants are not just apply vs. replace, you can update a resource with apply, edit, patch, or replace. And really, it is not <em>Kubernetes apply vs. replace</em> or <em>Kubernetes apply vs. patch</em>, each approach has specific use cases in mind. If you need atomic updates, using <code>kubectl replace</code> or a <code>PUT</code>/replace/update API call is the way to go. Otherwise, using a strategic-merge patch via <code>kubectl apply</code> or a <code>PATCH</code> API call is usually the best choice. At the very least, I hope you have learned that you should not trust Google or Stack Overflow when searching for ‘kubernetes apply vs replace’. That is, until this post replaces the current answer. If you have any questions, ping me on <a href="https://web.archive.org/web/20220508130521/https://twitter.com/ddgenome">Twitter</a> or in the <a href="https://web.archive.org/web/20220508130521/https://join.atomist.com/">Atomist community Slack</a>.</p><blockquote>Regardless of how you are updating your Kubernetes resources, take the burden off your developers and operators by monitoring your cluster with the <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/kubernetes-health-alerts/">Kubernetes pod health monitor skill</a>.</blockquote><figure class="kg-card kg-image-card kg-card-hascaption"><img src="./Kubernetes Apply vs. Replace vs. Patch_files/google-kubernetes-apply-replace.png" class="kg-image" alt="" loading="lazy"><figcaption>Kubernetes apply vs replace? Nope!</figcaption></figure><p><em><strong>Editor's note: This post was originally published in May 2020. Since then, Atomist has evolved and updated its platform and product offerings. For up-to-date information, check out the <a href="https://web.archive.org/web/20220508130521/https://atomist.com/">Atomist product page</a>.</strong></em></p>
+                    </div>
+                </section>
+
+                <footer class="post-full-footer">
+
+                        
+<section class="author-card">
+        <img class="author-profile-image" src="./Kubernetes Apply vs. Replace vs. Patch_files/dd.jpg" alt="David Dooling">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/author/david/">David Dooling</a></h4>
+            <p>Automata at Atomist</p>
+    </section>
+</section>
+
+
+                </footer>
+
+                    <section class="try-atomist-box">
+                        <h2>
+                            Start using Atomist today. Get early access.
+                        </h2>
+                        <a href="https://web.archive.org/web/20220508130521/https://dso.atomist.com/user/signup" class="btn btn--primary big">Try Atomist For Free</a>
+                    </section>
+
+            </article>
+
+        </div>
+    </main>
+
+    <aside class="read-next outer">
+        <strong class="read-next-title">Recommended for You</strong>
+
+        <div class="read-next-feed">
+            <article class="read-next-card hidden"></article>
+                        <article class="post-card post ">
+
+
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/containerizing-a-clojure-project/" class="post-card-content__image" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2022/01/containerizing--clojure-project-.png)">
+        </a>
+
+
+    <header class="post-card-header">
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/containerizing-a-clojure-project/" class="post-card-header__inner">
+            <span class="reading-time">6 min read</span>
+        </a>
+    </header>
+
+    <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/containerizing-a-clojure-project/" class="post-card-content" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2022/01/containerizing--clojure-project-.png)">
+
+        <h2 class="post-card-title">Containerizing a Clojure project</h2>
+
+        <span class="post-card-excerpt">
+            <p>Our team used Dockerfiles for several years but recently discovered that we could get better results using only Jib. In this post, we'll show you how to do it and where you'll see the most significant results.</p>
+        </span>
+    </a>
+
+    <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/containerizing-a-clojure-project/" class="post-card-text">
+        <h2 class="post-card-title">Containerizing a Clojure project</h2>
+
+        <p>Our team used Dockerfiles for several years but recently discovered that we could get better results using only Jib. In this post, we'll show you how to do it and where you'll see the most significant results.</p>
+    </a>
+
+
+
+    <footer class="post-card-meta">
+
+        <ul class="author-list">
+
+            <li class="author-list-item">
+            </li>
+
+        </ul>
+
+    </footer>
+
+</article>
+                        <article class="post-card post featured ">
+
+
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/preparing-for-the-next-log4shell/" class="post-card-content__image" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2022/01/preparing-for-the-next-log4shell.png)">
+        </a>
+
+
+    <header class="post-card-header">
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/preparing-for-the-next-log4shell/" class="post-card-header__inner">
+            <span class="reading-time">4 min read</span>
+        </a>
+    </header>
+
+    <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/preparing-for-the-next-log4shell/" class="post-card-content" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2022/01/preparing-for-the-next-log4shell.png)">
+
+        <h2 class="post-card-title">Preparing for the next log4shell</h2>
+
+        <span class="post-card-excerpt">
+            <p>We can't predict where the next vulnerability is going to be (or perhaps more accurately, where it already is).  Instead, we have to prepare for what we don't yet know.</p>
+        </span>
+    </a>
+
+    <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/preparing-for-the-next-log4shell/" class="post-card-text">
+        <h2 class="post-card-title">Preparing for the next log4shell</h2>
+
+        <p>We can't predict where the next vulnerability is going to be (or perhaps more accurately, where it already is).  Instead, we have to prepare for what we don't yet know.</p>
+    </a>
+
+
+
+    <footer class="post-card-meta">
+
+        <ul class="author-list">
+
+            <li class="author-list-item">
+            </li>
+
+        </ul>
+
+    </footer>
+
+</article>
+                        <article class="post-card post featured ">
+
+
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/ignoring-container-vulnerabilities/" class="post-card-content__image" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2022/01/by-tag-4.png)">
+        </a>
+
+
+    <header class="post-card-header">
+        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/ignoring-container-vulnerabilities/" class="post-card-header__inner">
+            <span class="reading-time">5 min read</span>
+        </a>
+    </header>
+
+    <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/ignoring-container-vulnerabilities/" class="post-card-content" style="background-image: url(https://web.archive.org/web/20220508130521im_/https://blog.atomist.com/content/images/2022/01/by-tag-4.png)">
+
+        <h2 class="post-card-title">Why you’re probably ignoring container vulnerabilities</h2>
+
+        <span class="post-card-excerpt">
+            <p>See exactly where and how vulnerabilities end up in your container images so that you can fix the ones that matter and stop ignoring vulnerabilities.</p>
+        </span>
+    </a>
+
+    <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/ignoring-container-vulnerabilities/" class="post-card-text">
+        <h2 class="post-card-title">Why you’re probably ignoring container vulnerabilities</h2>
+
+        <p>See exactly where and how vulnerabilities end up in your container images so that you can fix the ones that matter and stop ignoring vulnerabilities.</p>
+    </a>
+
+
+
+    <footer class="post-card-meta">
+
+        <ul class="author-list">
+
+            <li class="author-list-item">
+            </li>
+
+        </ul>
+
+    </footer>
+
+</article>
+
+        </div>
+    </aside>
+
+    <div class="floating-header">
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+
+    <footer class="footer">
+    <div class="footer-helper">
+        <div class="footer-col">
+            <div class="footer-links">
+                <ul class="footer-links-menu">
+                    <li class="footer-links-menu__item">
+                        <h2><a href="https://web.archive.org/web/20220508130521/https://atomist.com/product">Product</a></h2>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/devsecops/docker-security">DevSecOps</a>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/devsecops/docker-security">Docker Security</a>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/product/vulnerability-scanning">Vulnerability Scanning</a>
+                    </li>
+                </ul>
+                <ul class="footer-links-menu">
+                    <li class="footer-links-menu__item">
+                        <h2>Resources</h2>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://docs.atomist.com/getting-started/">Quick Start Guide</a>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://docs.atomist.com/">Documentation</a>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://blog.atomist.com/">Blog</a>
+                    </li>
+                </ul>
+                <ul class="footer-links-menu">
+                    <li class="footer-links-menu__item">
+                        <h2>Company</h2>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/about">About Us</a>
+                    </li>
+                    <li class="footer-links-menu__item">
+                        <p onclick="Intercom(&#39;showNewMessage&#39;);">Contact Us</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="footer-info">
+                <a href="https://web.archive.org/web/20220508130521/https://atomist.com/" class="footer-info__logo">
+                    <img src="./Kubernetes Apply vs. Replace vs. Patch_files/atomist-logo.svg" alt="Atomist" height="50" width="50">
+                </a>
+                <p class="footer-info__copy">
+                    Copyright © 2021 Atomist. All Rights Reserved.
+                </p>
+                <ul class="footer-info-terms">
+                    <li class="footer-info-terms__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/terms">Terms</a>
+                    </li>
+                    <li class="footer-info-terms__item">
+                        •
+                    </li>
+                    <li class="footer-info-terms__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://atomist.com/privacy">Privacy</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-col">
+            <div class="footer-signup">
+                <h2>Sign Up for Our Newsletter</h2>
+                <form class="footer-signup-form" method="POST" action="https://web.archive.org/web/20220508130521/https://atomist.us13.list-manage.com/subscribe/post?u=c81c3429afb56006bfbec1428&amp;id=01fecc13be">
+                    <input type="email" placeholder="Email Address">
+                    <button type="submit" class="btn btn--outline medium">Submit</button>
+                </form>
+            </div>
+            <div class="footer-social">
+                <h2>Find Us On:</h2>
+                <ul class="footer-social-menu">
+                    <li class="footer-social-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://twitter.com/atomist" target="_blank">
+                            <img src="./Kubernetes Apply vs. Replace vs. Patch_files/twitter.svg" alt="Twitter" height="20" width="24">
+                        </a>
+                    </li>
+                    <li class="footer-social-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://github.com/atomist" target="_blank">
+                            <img src="./Kubernetes Apply vs. Replace vs. Patch_files/github.svg" alt="Github" height="24" width="25">
+                        </a>
+                    </li>
+                    <li class="footer-social-menu__item">
+                        <a href="https://web.archive.org/web/20220508130521/https://www.linkedin.com/company/atomist" target="_blank">
+                            <img src="./Kubernetes Apply vs. Replace vs. Patch_files/linkedin.svg" alt="Linkedin" height="24" width="24">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</div>
+
+<script>
+    window.intercomSettings = {
+        app_id: "o7weh035",
+    };
+</script>
+<script>(function () {
+    var w = window;
+    var ic = w.Intercom;
+    if (typeof ic === "function") {
+        ic('reattach_activator');
+        ic('update', w.intercomSettings);
+    } else {
+        var d = document;
+        var i = function () {
+            i.c(arguments);
+        };
+        i.q = [];
+        i.c = function (args) {
+            i.q.push(args);
+        };
+        w.Intercom = i;
+        var l = function () {
+            var s = d.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = 'https://web.archive.org/web/20220508130521/https://widget.intercom.io/widget/o7weh035';
+            var x = d.getElementsByTagName('script')[0];
+            x.parentNode.insertBefore(s, x);
+        };
+        if (w.attachEvent) {
+            w.attachEvent('onload', l);
+        } else {
+
+            w.addEventListener('load', l, false);
+        }
+    }
+})();</script>
+<script>
+    var images = document.querySelectorAll('.kg-gallery-image img');
+    images.forEach(function (image) {
+        var container = image.closest('.kg-gallery-image');
+        var width = image.attributes.width.value;
+        var height = image.attributes.height.value;
+        var ratio = width / height;
+        container.style.flex = ratio + ' 1 0%';
+    })
+</script>
+
+
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/jquery-3.2.1.min.js" crossorigin="anonymous">
+</script>
+<script type="text/javascript" src="./Kubernetes Apply vs. Replace vs. Patch_files/jquery.fitvids.js"></script>
+
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/mobile-nav.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/control-chat-position.js"></script>
+
+
+<script>
+    $(function () {
+        window.location.pathname
+        $('.categories-list .category-item').each(function () {
+            if ($(this).attr('href') === window.location.pathname) {
+                $(this).addClass('active');
+            }
+        });
+    });
+</script>
+
+<script>
+    const nav = document.getElementById("nav");
+    const navBtn = document.getElementById("nav-btn");
+    const offset = nav.offsetHeight * 2;
+    window.addEventListener("scroll", function (){
+        if (window.pageYOffset >= offset) {
+            nav.classList.add("sticky")
+            navBtn.classList.remove("btn--primary")
+            navBtn.classList.add("btn--outline")
+        } else {
+            nav.classList.remove("sticky");
+            navBtn.classList.add("btn--primary")
+            navBtn.classList.remove("btn--outline")
+        }
+    })
+
+    const openMobMenuBtn = document.getElementById("open-menu")
+    const closeMobMenuBtn = document.getElementById("close-menu")
+    const mobMenu = document.getElementById("mob-menu")
+    const body = document.querySelector("body")
+
+    openMobMenuBtn.addEventListener("click", function (){
+        mobMenu.classList.add("show")
+        body.style.overflow = "hidden"
+    })
+    closeMobMenuBtn.addEventListener("click", function (){
+        mobMenu.classList.remove("show")
+        body.style.overflow = "auto"
+    })
+
+    const mobMenuItemBtns = [...document.querySelectorAll(".mob-menu-body-items-item__link")]
+
+    function removeSelectedMobMenuItemBtns(selectedItem) {
+        for(const mobMenuItemBtn of mobMenuItemBtns){
+            if(selectedItem !== mobMenuItemBtn) mobMenuItemBtn.classList.remove("selected")
+        }
+    }
+
+    for(const mobMenuItemBtn of mobMenuItemBtns){
+        mobMenuItemBtn.addEventListener("click", function (e){
+            removeSelectedMobMenuItemBtns(mobMenuItemBtn)
+            e.target.classList.toggle("selected")
+        })
+    }
+</script>
+
+    <script>
+
+        $(document).ready(function () {
+            // Start fitVids
+            var $postContent = $(".post-full-content");
+            $postContent.fitVids();
+            // End fitVids
+
+            var progressBar = document.querySelector('#reading-progress');
+            var header = document.querySelector('.floating-header');
+            var title = document.querySelector('.post-full-title');
+
+            var lastScrollY = window.scrollY;
+            var lastWindowHeight = window.innerHeight;
+            var lastDocumentHeight = $(document).height();
+            var ticking = false;
+
+            function onScroll() {
+                lastScrollY = window.scrollY;
+                requestTick();
+                moveSharePanel();
+            }
+
+            function onResize() {
+                lastWindowHeight = window.innerHeight;
+                lastDocumentHeight = $(document).height();
+                requestTick();
+                resizeSharePanelMetrics();
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(update);
+                }
+                ticking = true;
+            }
+
+            function update() {
+                var trigger = title.getBoundingClientRect().top + window.scrollY;
+                var triggerOffset = title.offsetHeight + 35;
+                var progressMax = lastDocumentHeight - lastWindowHeight;
+
+                // show/hide floating header
+                if (lastScrollY >= trigger + triggerOffset) {
+                    header.classList.add('floating-active');
+                } else {
+                    header.classList.remove('floating-active');
+                }
+
+                progressBar.setAttribute('max', progressMax);
+                progressBar.setAttribute('value', lastScrollY);
+
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', onScroll, {passive: true});
+            window.addEventListener('resize', onResize, false);
+
+            update();
+
+            var $postContentShare = $('.post-content-share');
+            var $postFooter = $('.post-full-footer');
+            resizeSharePanelMetrics();
+            moveSharePanel();
+
+            function moveSharePanel() {
+                if ($(window).width() <= 767) {
+                    $postContentShare.css('marginTop', 0);
+                    return;
+                }
+
+                var scrollTop = $(window).scrollTop();
+                var scrollOffset = 0;
+                var shareOffset = $postContentShare.data('shareOffset') - scrollOffset;
+                if (shareOffset < scrollTop) {
+                    $postContentShare.css('marginTop', (scrollTop - shareOffset) + 'px');
+                }
+
+                if ($postContentShare.offset().top + $postContentShare.height() >= $postFooter.offset().top) {
+                    $postContentShare.css('marginTop', $postContentShare.data('maxShareOffset') + 'px');
+                }
+            }
+
+            function resizeSharePanelMetrics() {
+                $postContentShare.data('shareOffset', $postContentShare.offset().top);
+                $postContentShare.data('maxShareOffset', $postFooter.offset().top - $postContentShare.offset().top - $postContentShare.height() - 1);
+            }
+
+            $('.post-content-up-arrow').on('click', function (event) {
+                event.preventDefault();
+
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 800);
+            });
+
+        });
+    </script>
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://web.archive.org/web/20220508130521if_/https://www.googletagmanager.com/ns.html?id=GTM-MZ8NMFS" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-clojure.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-bash.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-line-numbers.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-java.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-clojure.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-javascript.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-typescript.min.js"></script>
+<script src="./Kubernetes Apply vs. Replace vs. Patch_files/prism-bash.js"></script>
+<!-- Add additional languages here -->
+<!-- Ghost button styles -->
+<style>.btn-link.disabled,.btn-link[disabled],.btn.disabled,.btn[disabled],fieldset[disabled] .btn{opacity:.65;cursor:not-allowed;pointer-events:none;box-shadow:none}.btn{margin-bottom:0;padding:9px 15px;border:1px solid #dfe1e3;background:#fff;border-radius:4px;color:#808284;text-transform:uppercase;text-shadow:none;white-space:nowrap;letter-spacing:1px;font-size:1.1rem;line-height:1.428571429;transition:color .2s ease,background .2s ease,border-color .2s ease;font-family:'Open Sans',sans-serif;cursor:pointer;text-decoration:none}.btn:focus,.btn:hover{border-color:#5ba4e5;color:#308ddf}.btn-link:active,.btn-link:focus,.btn-link:hover{text-decoration:underline}.btn.active:focus,.btn:active:focus,.btn:focus{outline:dotted thin;outline:-webkit-focus-ring-color auto 0;outline-offset:-2px}.btn.active,.btn:active{outline:0;background-image:none;box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}.btn-hover-green:active,.btn-hover-green:focus,.btn-hover-green:hover{border-color:#9fbb58;color:#859f41}.btn-blue{border-color:#308ddf;background:#5ba4e5;color:#fff}.btn-blue:active,.btn-blue:focus,.btn-blue:hover{border-color:#1e73be;background:#308ddf;color:#fff}.btn-green{border-color:#859f41;background:#9fbb58;color:#fff}.btn-green:active,.btn-green:focus,.btn-green:hover{border-color:#667b32;background:#859f41;color:#fff}.btn-red{border-color:#d1341f;background:#e25440;color:#fff}.btn-red:active,.btn-red:focus,.btn-red:hover{border-color:#a42919;background:#d1341f;color:#fff}.btn-link,.btn-link:active,.btn-link:focus,.btn-link:hover{border-color:transparent;background:0 0;color:#5ba4e5}.btn-link.disabled,.btn-link[disabled]{color:#b2b2b2}.btn-minor:active,.btn-minor:focus,.btn-minor:hover{border-color:#c1c1c1;background:#fff;box-shadow:none;color:#808284}.btn-lg{padding:12px 18px;border-radius:4px;font-size:1.4rem;line-height:1.33}.btn-sm{padding:7px 10px;border-radius:2px;font-size:1rem;line-height:1.5}.btn-block{display:block}.btn-block+.btn-block{margin-top:5px}.btn.btn-outline{background-color:#fff}.btn.btn-blue.btn-outline{color:#5ba4e5}.btn.btn-red.btn-outline{color:#e25440}.btn.btn-green.btn-outline{color:#9fbb58}</style>
+
+
+
+
+
+<div id="ghost-portal-root"></div><iframe id="intercom-frame" style="position: absolute !important; opacity: 0 !important; width: 1px !important; height: 1px !important; top: 0 !important; left: 0 !important; border: none !important; display: block !important; z-index: -1 !important; pointer-events: none;" aria-hidden="true" tabindex="-1" title="Intercom" allow="autoplay &#39;self&#39;; fullscreen &#39;self&#39;" src="./Kubernetes Apply vs. Replace vs. Patch_files/saved_resource.html"></iframe><div class="intercom-lightweight-app"><style id="intercom-lightweight-app-style" type="text/css">
+  @keyframes intercom-lightweight-app-launcher {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes intercom-lightweight-app-gradient {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes intercom-lightweight-app-messenger {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .intercom-lightweight-app {
+    position: fixed;
+    z-index: 2147483001;
+    width: 0;
+    height: 0;
+    font-family: intercom-font, "Helvetica Neue", "Apple Color Emoji", Helvetica, Arial, sans-serif;
+  }
+
+  .intercom-lightweight-app-gradient {
+    position: fixed;
+    z-index: 2147483002;
+    width: 500px;
+    height: 500px;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at bottom right,
+      rgba(29, 39, 54, 0.16) 0%,
+      rgba(29, 39, 54, 0) 72%);
+    animation: intercom-lightweight-app-gradient 200ms ease-out;
+  }
+
+  .intercom-lightweight-app-launcher {
+    position: fixed;
+    z-index: 2147483003;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #546270;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.06), 0 2px 32px 0 rgba(0, 0, 0, 0.16);
+    animation: intercom-lightweight-app-launcher 250ms ease;
+  }
+
+  .intercom-lightweight-app-launcher:focus {
+    outline: none;
+    
+  }
+
+  .intercom-lightweight-app-launcher-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    transition: transform 100ms linear, opacity 80ms linear;
+  }
+
+  .intercom-lightweight-app-launcher-icon-open {
+    
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-open svg {
+    width: 28px;
+    height: 32px;
+  }
+
+  .intercom-lightweight-app-launcher-icon-open svg path {
+    fill: rgb(255, 255, 255);
+  }
+
+  .intercom-lightweight-app-launcher-icon-self-serve {
+    
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-self-serve svg {
+    height: 56px;
+  }
+
+  .intercom-lightweight-app-launcher-icon-self-serve svg path {
+    fill: rgb(255, 255, 255);
+  }
+
+  .intercom-lightweight-app-launcher-custom-icon-open {
+    max-height: 36px;
+    max-width: 36px;
+    
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-minimize {
+    
+        opacity: 0;
+        transform: rotate(-60deg) scale(0);
+      
+  }
+
+  .intercom-lightweight-app-launcher-icon-minimize svg {
+    width: 16px;
+  }
+
+  .intercom-lightweight-app-launcher-icon-minimize svg path {
+    fill: rgb(255, 255, 255);
+  }
+
+  .intercom-lightweight-app-messenger {
+    position: fixed;
+    z-index: 2147483003;
+    overflow: hidden;
+    background-color: white;
+    animation: intercom-lightweight-app-messenger 250ms ease-out;
+    
+        width: 376px;
+        height: calc(100% - 40px);
+        max-height: 704px;
+        min-height: 250px;
+        right: 20px;
+        bottom: 20px;
+        box-shadow: 0 5px 40px rgba(0,0,0,0.16);
+        border-radius: 8px;
+      
+  }
+
+  .intercom-lightweight-app-messenger-header {
+    height: 75px;
+    background: linear-gradient(
+      135deg,
+      rgb(0, 172, 193) 0%,
+      rgb(0, 81, 91) 100%
+    );
+  }
+
+  @media print {
+    .intercom-lightweight-app {
+      display: none;
+    }
+  }
+</style></div></body></html>
